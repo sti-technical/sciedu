@@ -3,6 +3,7 @@ services:
     name: sciedu
     runtime: docker
     plan: free
+    region: singapore
     envVars:
       - key: DB_HOST
         sync: false
