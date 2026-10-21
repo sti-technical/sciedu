@@ -7,7 +7,7 @@ services:
       - key: DB_HOST
         sync: false
       - key: DB_PORT
-        value: "3306"
+        value: "4000"   # TiDB Cloud ka port (XAMPP/MySQL par 3306 hota hai)
       - key: DB_NAME
         sync: false
       - key: DB_USER
