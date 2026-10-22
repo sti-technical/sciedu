@@ -1,4 +1,4 @@
-<?php $pageTitle = 'Home'; include 'includes/header.php';
+<?php require_once __DIR__ . '/includes/site.php'; $pageTitle = 'Home'; include 'includes/header.php';
 $courses = $pdo->query("SELECT name, short_name, duration FROM courses WHERE is_active=1 ORDER BY id LIMIT 6")->fetchAll();
 $news = $pdo->query("SELECT title, posted_on FROM news WHERE is_active=1 ORDER BY posted_on DESC LIMIT 5")->fetchAll();
 ?>

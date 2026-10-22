@@ -1,4 +1,4 @@
-<?php $pageTitle = 'Gallery'; include 'includes/header.php';
+<?php require_once __DIR__ . '/includes/site.php'; $pageTitle = 'Gallery'; include 'includes/header.php';
 $type = $_GET['type'] ?? '';
 if ($type === 'photo' || $type === 'video') {
     $st = $pdo->prepare('SELECT * FROM gallery WHERE type=? ORDER BY id DESC'); $st->execute([$type]); $items = $st->fetchAll();
