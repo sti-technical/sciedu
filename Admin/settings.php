@@ -1,5 +1,6 @@
 <?php require 'inc/auth.php'; require 'inc/layout.php';
 $fields = ['institute_name' => 'Institute ka naam', 'phone' => 'Phone', 'email' => 'Email', 'address' => 'Address', 'reg_prefix' => 'Registration number prefix (SCI)',
+           'whatsapp' => 'WhatsApp number (10 digit, floating button ke liye)', 'facebook' => 'Facebook page link (https://...)', 'instagram' => 'Instagram link', 'twitter' => 'Twitter/X link', 'linkedin' => 'LinkedIn link', 'youtube' => 'YouTube channel link',
            'about_text' => 'About us text', 'director_message' => 'Director message'];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     check_csrf($_POST['k'] ?? '');

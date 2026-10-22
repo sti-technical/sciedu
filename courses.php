@@ -1,9 +1,15 @@
-<?php require 'inc/auth.php'; require 'inc/layout.php'; require 'inc/crud.php';
-admin_header('Courses');
-crud(['table' => 'courses', 'fields' => [
-  'category' => ['label' => 'Category', 'type' => 'select', 'options' => ['Computer Program' => 'Computer Program', 'Vocational Program' => 'Vocational Program', 'Vocational Training' => 'Vocational Training']],
-  'name' => ['label' => 'Course ka naam', 'type' => 'text', 'req' => 1], 'short_name' => ['label' => 'Short naam (ADCA)', 'type' => 'text'],
-  'duration' => ['label' => 'Duration', 'type' => 'text'], 'fee' => ['label' => 'Fee (Rs.)', 'type' => 'number'],
-  'description' => ['label' => 'Description', 'type' => 'textarea'], 'is_active' => ['label' => 'Active?', 'type' => 'select', 'options' => [1 => 'Haan', 0 => 'Nahi']]],
-  'cols' => ['category' => 'Category', 'name' => 'Course', 'short_name' => 'Short', 'duration' => 'Duration', 'fee' => 'Fee', 'is_active' => 'Active (1=haan)']]);
-admin_footer();
+<?php $pageTitle = 'Courses'; include 'includes/header.php';
+$cats = ['Computer Program'=>'computer','Vocational Program'=>'vocational-program','Vocational Training'=>'vocational-training'];
+?>
+<div class="wrap"><h1>Courses we provide</h1>
+<?php foreach ($cats as $cat => $anchor):
+  $st = $pdo->prepare('SELECT * FROM courses WHERE category=? AND is_active=1 ORDER BY name');
+  $st->execute([$cat]); $rows = $st->fetchAll(); ?>
+  <h2 id="<?= $anchor ?>"><?= e($cat) ?></h2>
+  <?php if (!$rows): ?><p>Is category me abhi course nahi hai.</p><?php else: ?>
+  <ul class="course-list"><?php foreach ($rows as $r): ?>
+    <li><strong><?= e($r['name']) ?> (<?= e($r['short_name']) ?>)</strong><span><?= e($r['duration']) ?> &nbsp; Rs. <?= e(number_format($r['fee'])) ?></span></li>
+  <?php endforeach; ?></ul><?php endif; ?>
+<?php endforeach; ?>
+</div>
+<?php include 'includes/footer.php'; ?>

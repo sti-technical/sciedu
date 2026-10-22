@@ -1,4 +1,0 @@
-# uploads folder me PHP files chalne se rokta hai (security)
-<FilesMatch "\.(php|phtml|php5)$">
-  Require all denied
-</FilesMatch>

@@ -1,22 +1,45 @@
-<?php require 'inc/auth.php'; require 'inc/layout.php';
-$n = fn($sql) => (float)$pdo->query($sql)->fetchColumn();
-admin_header('Dashboard'); ?>
-<p>Welcome, <?= e($_SESSION['admin']['name']) ?>. Last login: <?= e($_SESSION['admin']['last_login'] ?? 'pehli baar') ?></p>
-<div class="stats">
- <div class="card"><b><?= $n('SELECT COUNT(*) FROM students') ?></b>Total students</div>
- <div class="card"><b><?= $n("SELECT COUNT(*) FROM students WHERE status='Pending'") ?></b>Verify baaki</div>
- <div class="card"><b><?= $n("SELECT COUNT(*) FROM students WHERE status='Course Completed'") ?></b>Course completed</div>
- <div class="card"><b><?= $n('SELECT COUNT(*) FROM enquiries') ?></b>Enquiries</div>
- <div class="card"><b>Rs. <?= number_format($n("SELECT COALESCE(SUM(amount),0) FROM fees WHERE YEAR(paid_on)=YEAR(CURDATE()) AND MONTH(paid_on)=MONTH(CURDATE())")) ?></b>Is mahine ki fees</div>
- <div class="card"><b><?= $n('SELECT COUNT(*) FROM exams') ?></b>Exams</div>
+<?php require_once __DIR__ . '/includes/site.php'; $pageTitle = 'Home'; include 'includes/header.php';
+$courses = $pdo->query("SELECT name, short_name, duration FROM courses WHERE is_active=1 ORDER BY id LIMIT 6")->fetchAll();
+$news = $pdo->query("SELECT title, posted_on FROM news WHERE is_active=1 ORDER BY posted_on DESC LIMIT 5")->fetchAll();
+?>
+<?php $banners = media_ids('banner'); if ($banners): ?>
+<section class="slider" aria-label="Banner"><?php foreach ($banners as $i => $bid): ?><img src="<?= media_url($bid) ?>" alt="" class="<?= $i === 0 ? 'on' : '' ?>"><?php endforeach; ?></section>
+<div class="wrap" style="padding-bottom:0"><div class="check-box" style="max-width:520px">
+  <h2>Certificate verify karein</h2>
+  <form action="<?= BASE ?>/student-zone/verify-certificate.php" method="get"><label for="no2">Certificate number</label><input id="no2" name="no" required>
+  <p><button type="submit">Verify</button> <a class="btn" href="<?= BASE ?>/student-zone/register.php">Online registration</a></p></form>
+</div></div>
+<?php else: ?>
+<section class="hero"><div class="hero-in">
+  <div>
+    <h1>Computer ki padhai, jo naukri tak le jaaye.</h1>
+    <p>ISO certified institute me computer, vocational aur job-oriented courses. Online registration karein aur apna certificate kabhi bhi verify karein.</p>
+    <a class="btn" href="<?= BASE ?>/student-zone/register.php">Online registration</a>
+  </div>
+  <div class="check-box">
+    <h2>Certificate verify karein</h2>
+    <form action="<?= BASE ?>/student-zone/verify-certificate.php" method="get">
+      <label for="no">Certificate number</label>
+      <input id="no" name="no" required>
+      <p><button type="submit">Verify</button></p>
+    </form>
+  </div>
+</div></section>
+<?php endif; ?>
+
+<div class="wrap">
+  <h2>Hamare courses</h2>
+  <ul class="course-list">
+  <?php foreach ($courses as $c): ?>
+    <li><strong><?= e($c['name']) ?> (<?= e($c['short_name']) ?>)</strong><span><?= e($c['duration']) ?></span></li>
+  <?php endforeach; ?>
+  </ul>
+  <a class="btn" href="<?= BASE ?>/courses.php">Saare courses dekhein</a>
+
+  <h2 style="margin-top:2.5rem">Naye notice</h2>
+  <?php if (!$news): ?><p>Abhi koi notice nahi hai.</p><?php else: ?>
+  <ul class="news"><?php foreach ($news as $n): ?>
+    <li><?= e($n['title']) ?> <small>(<?= e($n['posted_on']) ?>)</small></li>
+  <?php endforeach; ?></ul><?php endif; ?>
 </div>
-<h3>Naye registration (verify baaki)</h3>
-<table><tr><th>Reg no.</th><th>Naam</th><th>Mobile</th><th>Action</th></tr>
-<?php $rows = $pdo->query("SELECT id,reg_no,name,mobile FROM students WHERE status='Pending' ORDER BY id DESC LIMIT 8")->fetchAll();
-if (!$rows) echo '<tr><td colspan="4">Koi pending registration nahi.</td></tr>';
-foreach ($rows as $r): ?><tr><td><?= e($r['reg_no']) ?></td><td><?= e($r['name']) ?></td><td><?= e($r['mobile']) ?></td>
-<td><a href="students.php?act=verify&id=<?= $r['id'] ?>&k=<?= csrf() ?>">Verify</a></td></tr><?php endforeach; ?></table>
-<h3 style="margin-top:1.5rem">Latest enquiries</h3>
-<table><tr><th>Naam</th><th>Mobile</th><th>Course</th><th>Date</th></tr>
-<?php foreach ($pdo->query('SELECT * FROM enquiries ORDER BY id DESC LIMIT 5') as $r): ?><tr><td><?= e($r['name']) ?></td><td><?= e($r['mobile']) ?></td><td><?= e($r['course_interest']) ?></td><td><?= e($r['created_at']) ?></td></tr><?php endforeach; ?></table>
-<?php admin_footer();
+<?php include 'includes/footer.php'; ?>
