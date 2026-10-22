@@ -2,6 +2,14 @@
 $courses = $pdo->query("SELECT name, short_name, duration FROM courses WHERE is_active=1 ORDER BY id LIMIT 6")->fetchAll();
 $news = $pdo->query("SELECT title, posted_on FROM news WHERE is_active=1 ORDER BY posted_on DESC LIMIT 5")->fetchAll();
 ?>
+<?php $banners = media_ids('banner'); if ($banners): ?>
+<section class="slider" aria-label="Banner"><?php foreach ($banners as $i => $bid): ?><img src="<?= media_url($bid) ?>" alt="" class="<?= $i === 0 ? 'on' : '' ?>"><?php endforeach; ?></section>
+<div class="wrap" style="padding-bottom:0"><div class="check-box" style="max-width:520px">
+  <h2>Certificate verify karein</h2>
+  <form action="<?= BASE ?>/student-zone/verify-certificate.php" method="get"><label for="no2">Certificate number</label><input id="no2" name="no" required>
+  <p><button type="submit">Verify</button> <a class="btn" href="<?= BASE ?>/student-zone/register.php">Online registration</a></p></form>
+</div></div>
+<?php else: ?>
 <section class="hero"><div class="hero-in">
   <div>
     <h1>Computer ki padhai, jo naukri tak le jaaye.</h1>
@@ -17,6 +25,7 @@ $news = $pdo->query("SELECT title, posted_on FROM news WHERE is_active=1 ORDER B
     </form>
   </div>
 </div></section>
+<?php endif; ?>
 
 <div class="wrap">
   <h2>Hamare courses</h2>
